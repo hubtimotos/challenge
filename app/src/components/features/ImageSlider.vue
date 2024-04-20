@@ -1,49 +1,73 @@
 <script setup lang="ts">
-import { ref, defineProps, onMounted } from 'vue'
-import axios from 'axios' // Importiere axios für HTTP-Anfragen
-
-const props = defineProps({
-  images: Object
-})
-
-const imageCount = ref(0)
-
-onMounted(async () => {
-  try {
-    const response = await axios.get(`http://localhost:3000/images/count/${props.images.path}`)
-    imageCount.value = response.data.count
-  } catch (error) {
-    console.error('Fehler beim Abrufen der Bildanzahl:', error)
-  }
-})
+  import { defineComponent } from 'vue'
+  import axios from 'axios'
 </script>
 
 <template>
   <div class="image-slider">
-    <img
-      v-for="index in imageCount"
-      :key="index"
-      :class="{ active: currentSlide === index }"
-      :data-slider="index"
-      :src="`http://localhost:3000/images/${props.images.path}/${props.images.colorPathName}${index}.webp`"
-      alt="#"
-    />
-    <div class="slider-bullets">
-      <span
-        v-for="index in imageCount"
-        :key="index"
-        :class="{ bullet: true, active: currentSlide === index }"
-        :data-slider="index"
-        @click="changeSlide(index)"
-      ></span>
+    <div class="slider-nav">
+      <div class="left" @click="changeSlide(-1)"></div>
+      <div class="right" @click="changeSlide(+1)"></div>
+    </div>
+    <img :src="imagePath" alt="">
+    <div class="slider-bullets" v-if="imageCount > 1">
+      <span v-for="index in imageCount" :key="index" :class="{ bullet: true, active: currentSlide === index }" @click="getSlide(index)"></span>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-const currentSlide = ref(0)
-const changeSlide = (index: number) => {
-  console.log(currentSlide, index)
-  currentSlide.value = index
-}
+  export default defineComponent({
+    name: "image-slider",
+    props: {
+      color: {
+        type: Object,
+        required: true
+      }
+    },
+    data() {
+      return {
+        imageCount: 0,
+        imagePath: '',
+        currentSlide: 1
+      }
+    },
+    mounted() {
+      this.getImageCount()
+      this.getSlide(this.currentSlide)
+    },
+    watch: {
+      color: {
+        handler() {
+          this.getImages(this.color.path, this.color.colorPathName, this.currentSlide);
+        },
+        immediate: true
+      }
+    },
+    methods: {
+      async getImageCount() {
+        try {
+          const response = await axios.get(`http://localhost:3000/images/count/${this.color.path}`)
+          this.imageCount = response.data.count
+        } catch (error) {
+          console.error('Fehler beim Abrufen der Bildanzahl:', error)
+        }
+      },
+      changeSlide(direction: number) {
+        const prev = -1;
+        const next = 1;
+        if (!(direction === prev && this.currentSlide === 1) && !(direction === next && this.currentSlide === this.imageCount)) {
+          const newIndex = this.currentSlide + direction
+          this.getSlide(newIndex)
+        }
+      },
+      getSlide(index: number) {
+        this.currentSlide = index
+        this.getImages(this.color.path, this.color.colorPathName, index)
+      },
+      getImages(path: string, name: string, nmbr: number) {
+        this.imagePath = `http://localhost:3000/images/${path}/${name}${nmbr}.webp`;
+      }
+    }
+  })
 </script>

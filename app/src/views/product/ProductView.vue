@@ -1,14 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import ItemList from '@/components/product/ItemList.vue';
-import ProductFilter from '@/components/product/ProductFilter.vue';
-import productsData from '@/assets/products.json';
-
-const products = ref([]);
-
-onMounted(() => {
-  products.value = productsData;
-});
+  import ItemList from '@/components/product/ItemList.vue'
+  import ProductFilter from '@/components/product/ProductFilter.vue'
+  import productsData from '@/assets/products.json'
 </script>
 
 <template>
@@ -23,3 +16,15 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<script lang="ts">
+  import { defineComponent } from 'vue'
+  export default defineComponent({
+    name: "product-view",
+    data() {
+      return {
+        products: productsData
+      }
+    }
+  })
+</script>

@@ -39,14 +39,14 @@
         }
       }
       .care {
-        border-top: 0.0625rem solid rgba(0,0,0,0.1);
+        border-top: 0.0625rem solid rgba(0, 0, 0, 0.1);
         margin-top: var(--grid-gap);
         padding-top: var(--grid-gap);
       }
       .text {
         p {
-          padding: var(--grid-gap) 0; 
-          border-bottom: 0.0625rem solid rgba(0,0,0,0.1);
+          padding: var(--grid-gap) 0;
+          border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.1);
           margin-bottom: var(--grid-gap);
           &:last-child {
             border: none;
